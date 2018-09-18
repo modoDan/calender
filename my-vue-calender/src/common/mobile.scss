@@ -1,0 +1,158 @@
+@charset "UTF-8";
+html {
+    font-size: 62.5%;/* 10÷16=62.5% 1rem=16px*62.5%=10px rem取决于html字体大小，此处是将16px进行缩放的，可以直接用16px*/
+    font-family: "微软雅黑", "Microsoft yahei";
+}
+
+blockquote,
+body,
+dd,
+dl,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+ol,
+option,
+p,
+select,
+textarea,
+ul {
+    margin: 0;
+    padding: 0
+}
+
+body {
+    background: #f5f4f0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+input,
+ol,
+option,
+td,
+textarea,
+th,
+ul {
+    padding: 0
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 400;
+    font-size: 100%
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+menu,
+nav,
+section {
+    display: block
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+ol,
+ul {
+    list-style-type: none
+}
+
+
+input[type=text],
+textarea {
+    -webkit-appearance: none
+}
+
+input:focus {
+    -webkit-user-modify: read-write-plaintext-only
+}
+
+fieldset,
+img {
+    border: 0
+}
+
+a {
+    text-decoration: none
+}
+
+a,
+input,
+textarea {
+    outline: 0
+}
+
+blockquote,
+q {
+    quotes: none
+}
+
+blockquote:after,
+blockquote:before,
+q:after,
+q:before {
+    content: '';
+    content: none
+}
+
+textarea {
+    overflow: auto;
+    resize: none
+}
+
+@media only screen and (min-width:800px) {
+    html {
+        font-size: 112.5%!important/* 18÷16=112.5% 1rem=16px*112.5%=18px*/
+    }
+}
+
+@media only screen and (min-width:1024px) {
+    html {
+        font-size: 131.25%!important/* 21÷16=131.25% 1rem=16px*131.25%=21px*/
+    }
+}
+
+@media only screen and (min-width:1280px) {
+    html {
+        font-size: 150%!important/* 24÷16=150% 1rem=16px*150%=24px*/
+    }
+}
+
+@media only screen and (min-width:1366px) {
+    html {
+        font-size: 168.75%!important/* 27÷16=168.75% 1rem=16px*168.75%=27px*/
+    }
+}
+@media only screen and (min-width:1440px) {
+    html {
+        font-size: 175.78125%!important/* 28.125÷16=175.78125% 1rem=16px*175.78125%=28px*/
+    }
+}
+@media only screen and (min-width:1680px) {
+    html {
+        font-size: 187.5%!important/* 30÷16=187.5% 1rem=16px*187.5%=30px*/
+    }
+}
+@media only screen and (min-width:1920px) {
+    html {
+        font-size: 250%!important/* 36÷16=225% 1rem=16px*225%=36px*/
+    }
+}
