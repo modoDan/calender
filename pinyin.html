@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<script src="./js/pinyin_dict_notone.js"></script>
+		<script src="./js/pinyinUtil.js"></script>
+		<script type="text/javascript">
+			var txt = ['新建分组', '新建分组(1)', '新建分组(1)', '新建分组(2)', '新建分组(3)', '新建分组(5)', '大哥大哥', '的风格ff', 'aa', 'aa'];
+			var txt1 = ['ffg', '233', 'zz', 'cxv', 'bsd']
+			var tcc = '新建分组';
+			let menulist = [{
+					"id": "M001",
+					"parentId": "M000",
+					"name": "首页",
+					"fileType": 1,
+					"menulist": ""
+				}, {
+					"id": "M002",
+					"parentId": "M000",
+					"name": "车辆买卖",
+					"fileType": 1,
+					"menulist": [{
+						"id": "M003",
+						"parentId": "M000",
+						"name": "新车",
+						"fileType": 1,
+						"menulist": [{
+							"id": "M006",
+							"parentId": "M000",
+							"name": "奥迪",
+							"fileType": 1,
+							"menulist": ""
+						}, {
+							"id": "M007",
+							"parentId": "M000",
+							"name": "别克",
+							"fileType": 1,
+							"menulist": ""
+						}]
+					}, {
+						"id": "M004",
+						"parentId": "M000",
+						"name": "二手车",
+						"fileType": 1,
+						"menulist": ""
+					}, {
+						"id": "M005",
+						"parentId": "M000",
+						"name": "改装车",
+						"fileType": 1,
+						"menulist": ""
+					}]
+				}, {
+					"id": "M006",
+					"parentId": "M000",
+					"name": "宠物",
+					"fileType": 1,
+					"menulist": ""
+				}];
+			txt.sort(function(a, b) {
+				a = pinyinUtil.getPinyin(a);
+				b = pinyinUtil.getPinyin(b);
+				//				console.log(a)
+				return a.localeCompare(b); //排序,英文排序,汉字排在英文后面
+			});
+			txt1.sort(function(a, b) {
+				return a.localeCompare(b); //排序,英文排序,汉字排在英文后面
+			});
+			var set = new Set(txt)
+				//		console.log([...set] + '--去重')
+			var i = 1
+			
+			//递归重名验证
+			function tcd(arr, tc, i) {
+				if(new Set(arr).has(tc)) {
+					tc = '新建分组(' + i + ')'
+					i++
+					return tcd(arr, tc, i)
+				} else {
+					return tc
+				}
+			}
+			console.log('--tcd(tc)',tcd(txt, tcc, 1))
+			console.log('--newset',set.add(tcd(txt, tcc, 1)))
+			var a = []
+			//循环遍历取到每个name值
+			function factorialTree(arr, b) {
+				for(let i = 0; i < arr.length; i++) {
+					b.push(arr[i].name)
+					factorialTree(arr[i].menulist, b);
+				}
+				return b;
+			};
+			console.log(factorialTree(menulist,a));
+		</script>
+	</body>
+
+</html>
