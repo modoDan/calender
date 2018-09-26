@@ -9,23 +9,44 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><button>按钮</button>
-						<my-calender :options="options"></my-calender>
+					<!-- 日历定位 -->
+					<td><button @click="openDate($event)">点击定位1</button>
 					</td>
 					<td><button>按钮1</button>
-						<my-calender :options="options"></my-calender></button>
 					</td>
 					<td><button>按钮2</button>
 					</td>
-					<td><button>按钮3
+					<td><button @click="openDate($event)">点击定位2
 					</button>
-					<my-calender :options="options"></my-calender>
 					</td>
 				</tr>
-
+				<tr>
+					<td>周历
+					</td>
+					<td>月历
+					</td>
+					<td>季历
+					</td>
+					<td>年历
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<my-calender :options="options1" ref="mycalender"></my-calender>
+					</td>
+					<td>
+						<my-calender :options="options2" ref="mycalender"></my-calender>
+					</td>
+					<td>
+						<my-calender :options="options3" ref="mycalender"></my-calender>
+					</td>
+					<td>
+						<my-calender :options="options4" ref="mycalender"></my-calender>
+					</td>
+				</tr>
 			</tbody>
 		</table>
-		<my-calender :options="options"></my-calender>
+		<my-calender :options="options" ref="poscalender"></my-calender>
 	</div>
 </template>
 
@@ -36,11 +57,42 @@
 		data: function() {
 			return {
 				options: {
-					dateType: 'day',
-					compareTime: ['2018-07-01', '2018-01-01', '2018-04-01', '2018-07-09'],
-					events:this.pickDate//可以自定义为函数(直接调用方法this.pickDate)
+					dateType: 'day',//日历类型为day,week,month,quarter,year五种，
+					//周以每周一开始（如2018-09-24表示为这一周），月以每月1号开始（如06-01表示6月份），季度以当前季度第一月1号（如04-01表示二季度），年以每年的一月一号开始（如2018-01-01表示2018年）
+					compareTime: ['2018-10-01', '2018-09-01', '2018-08-21', '2018-07-09'],
+					//比较时间要与日历类型定义的时间对应（如2018-07-01在月历中表示7月，季历中表示第三季度，年历中则不对应2018年，所以要先处理一下时间格式）
+					events:this.pickDate,//可以自定义为函数(直接调用方法this.pickDate)
+					text:'',//为空时表示只弹出日历框，不显示input框
+					styles:'tipClass'//类名className，直接在外面定义即可
 				},
-				
+				options1: {
+					dateType: 'week',
+					compareTime: ['2018-07-01', '2018-01-01', '2018-04-01', '2018-07-09'],
+					events:this.pickDate,
+					text:'input',
+					styles:'tipClass'
+				},
+				options2: {
+					dateType: 'month',
+					compareTime: ['2018-07-08', '2018-10-01'],
+					events:this.pickDate,
+					text:'input',
+					styles:'tipClass'
+				},
+				options3: {
+					dateType: 'quarter',
+					compareTime: ['2018-07-01','2018-04-01', '2018-07-09'],
+					events:this.pickDate,
+					text:'input',
+					styles:'tipClass'
+				},
+				options4: {
+					dateType: 'year',
+					compareTime: ['2016-01-01', '2018-01-01', '2018-04-01'],
+					events:this.pickDate,
+					text:'input',
+					styles:'tipClass'
+				},
 			}
 		},
 		computed: {
@@ -50,21 +102,20 @@
 			myCalender
 		},
 		mounted() {
-//			this.$store.commit('newCurNow', new Date('2018-04-01'))
-//			this.$store.commit('newInitNow', new Date('2018-04-01'))
-//			this.$store.commit('newInittype', false)
+			this.$axios.get('/api/goods').then((response) => {
+				// console.log(response);
+				//this.$nextTick() => 在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+				//数据发生变化后，不能直接更新在dom上，需要在回调函数中刷新DOM,即异步加载DOM
+			});
 		},
 		methods: {
-			pickDate: function() {
-				//调接口
-				var params = {
-					type: 2,
-					timestart: new Date(),
-					themeid: 12
-				}
-				console.log(params)
-				alert(document.documentElement.clientWidth)
-				alert(document.getElementsByClassName('vue-calendar-picker')[0].offsetWidth)
+			pickDate: function(result) {
+				//可以做任何事
+				alert('您好呀!自定义事件'+'--'+result)
+			},
+			openDate: function(e) {
+				//调用组件内方法
+				this.$refs.poscalender.openDate(e)
 			},
 		}
 	}
@@ -74,22 +125,32 @@
 	.finished {
 		text-decoration: underline;
 	}
-	
+	html,body{
+		height: 100%;
+	}
+
 	#app {
 		font-family: 'Avenir', Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		text-align: center;
 		color: #2c3e50;
-		margin-top: 60px;
+		height: 100%;
 	}
 	
 	.table-common {
+		margin-top: 60px;
 		width: 100%;
 		height: 200px;
+		position: relative;
 	}
 	
 	.table-common tr {
 		height: 25%;
+	}
+	.tipClass:after {
+		content: '国庆';
+		color: red;
+		font-size: 12px
 	}
 </style>

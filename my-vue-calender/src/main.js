@@ -6,6 +6,9 @@ import App from './App'
 import router from './router'
 import Vuex from 'vuex'
 import store from './vuex/store'
+import axios from 'axios'
+Vue.prototype.$axios = axios
+// import './mock/mock.js';
 
 Vue.use(Vuex)
 

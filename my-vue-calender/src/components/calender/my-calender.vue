@@ -1,12 +1,18 @@
 <template>
 	<div class="date-picker__time-header" ref="datePicker">
 		<div class="date-event active">
-			<input type="text" v-if="!options.events" class="calender-input" v-model="dateText" @click="openDate">
-			<button class="calender-see" v-else @click="openDate"></button>
+			<input type="text" v-show="options.text" class="calender-input" v-model="dateText" @click="openDate">
 		</div>
 		<div class="date-pos" ref="datePos" v-clickoutside="() => showMenu = false">
 			<template v-if="showMenu">
-				<full-date :dateType="options.dateType" :events="options.events" :compareTime="options.compareTime"></full-date>
+				<full-date 
+				:dateType="options.dateType" 
+				:events="options.events" 
+				:compareTime="options.compareTime" 
+				:styles="options.styles"
+				:initOptions="initOptions"
+				@new-initOptions="newinitOptions"
+				></full-date>
 			</template>
 		</div>
 	</div>
@@ -21,6 +27,11 @@
 		data: function() {
 			return {
 				showMenu: false,
+				initOptions:{
+					curnow: new Date(),
+					initnow: new Date(),
+					inittype: false
+				}
 			}
 		},
 		props: {
@@ -29,7 +40,9 @@
 				default: {
 					dateType: 'day',
 					events: '',
-					compareTime: []
+					compareTime: [],
+					text:'',
+					styles:''
 				}
 			},
 		},
@@ -38,7 +51,8 @@
 		},
 		computed: {
 			curNow() {
-				return this.$store.state.curNow
+				// return this.$store.state.curNow
+				return this.initOptions.curnow
 			},
 			dateText() {
 				let valueMoment = this.curNow
@@ -49,6 +63,7 @@
 				} else if(this.options.dateType == 'day') { //天
 					return moment(valueMoment).format('YYYY年M月D日')
 				} else if(this.options.dateType == 'quarter') { //季度
+					let newM = moment(valueMoment).format('Q') * 3 - 3
 					return moment(valueMoment).format('YYYY年第Q季度')
 				} else if(this.options.dateType == 'week') { //周
 					var s_week = moment(this.getRangeWeek[0]).format('M月D日')
@@ -74,19 +89,37 @@
 		mounted() {
 		},
 		methods: {
+			newinitOptions(msg){
+				this.initOptions.curnow = msg.curnow
+				this.initOptions.initnow = msg.initnow
+				this.initOptions.inittype = msg.inittype
+			},
 			openDate: function(e) {
 				this.showMenu = true
-				var tableWidth = this.$refs.datePicker.offsetWidth;
-				var datePos = this.$refs.datePos;
-				console.log(tableWidth - e.clientX)
-//				datePos.style.right = (tableWidth - e.clientX) + 'px'; // 指定创建的DIV在文档中距离左侧的位置
-				datePos.style.top = e.clientY + 'px'; // 指定创建的DIV在文档中距离顶部的位置
-				datePos.style.position = 'absolute'; // 为新创建的DIV指定绝对定位
+				var _this = this
+				window.setTimeout(function() {
+					var datePos = _this.$refs.datePos;
+					var left = e.target.offsetLeft;
+					var top = e.target.offsetTop;
+					var width = document.getElementsByClassName("table-common")[0].offsetWidth;
+					var height = document.getElementsByClassName("table-common")[0].offsetHeight;
+					var maxHeight = document.getElementsByTagName("body")[0].offsetHeight + document.documentElement.scrollTop;
+					var bodywidth = document.getElementsByTagName("body")[0].offsetWidth
+					var targetHeight = datePos.offsetHeight;
+					top = top + targetHeight > maxHeight ? maxHeight - targetHeight - 10 : top;
+					// datePos.style.left = (left - bodywidth/1920 * 450) + 'px'; // 指定创建的DIV在文档中距离左侧的位置
+					datePos.style.left = (e.clientX - bodywidth/1920 * 150) + 'px';
+					datePos.style.top = top + 'px'; // 指定创建的DIV在文档中距离顶部的位置
+					datePos.style.position = 'absolute'; // 为新创建的DIV指定绝对定位
+				},10)
 				//重置日历组件数据
-				if(this.options.events) {
-					this.$store.commit('newCurNow', new Date())
-					this.$store.commit('newInitNow', new Date())
-					this.$store.commit('newInittype', false)
+				if(!this.options.text) {
+					this.initOptions.curnow = new Date()
+					this.initOptions.initnow = new Date()
+					this.initOptions.inittype = false
+					// this.$store.commit('newCurNow', new Date())
+					// this.$store.commit('newInitNow', new Date())
+					// this.$store.commit('newInittype', false)
 				}
 			}
 		}
@@ -113,5 +146,8 @@
 		background: #ececec;
 		outline: none;
 		border: none;
+	}
+	.date-picker__time-header{
+		display:inline-block
 	}
 </style>

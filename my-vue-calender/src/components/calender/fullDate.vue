@@ -6,7 +6,7 @@
 					<li class="arrow" @click="pickPre(currentYear,currentMonth,1)" v-if="dateType=='day'">❮❮</li>
 					<li class="arrow" @click="pickPre(starYear,currentMonth)" v-if="dateType=='year'">❮</li>
 					<li class="arrow" @click="pickPre(currentYear,currentMonth)" v-else>❮</li>
-					<li class="year-month" @click="pickYear(currentYear,currentMonth)">
+					<li class="year-month">
 						<span class="choose-year" v-if="dateType=='year'">{{ rangYear }}</span>
 						<span class="choose-year" v-else>{{ currentYear }}年</span>
 						<span class="choose-month" v-if="dateType=='day'">{{ currentMonth }}月</span>
@@ -26,7 +26,7 @@
 				<li>日</li>
 			</ul>
 			<ul class="days" v-if="dateType=='day'">
-				<li @click="pick(day)" v-for="(day,index) in days" :class="{'tickClass':tickClass(day)}">
+				<li @click="pick(day)" v-for="(day,index) in days" :key="index" :class="tickClass(day)?styles:''">
 					<!--其他月-->
 					<span v-if="day.getMonth()+1 != currentMonth" class="other-month">{{ day.getDate() }}</span>
 					<span v-else>
@@ -37,25 +37,25 @@
 				</li>
 			</ul>
 			<ul class="days" v-if="dateType=='month'" :class="'months'">
-				<li @click="pick(month)" v-for="month in months" :class="{'tickClass':tickClass(month)}">
+				<li @click="pick(month)" v-for="(month,index) in months" :key="index" :class="tickClass(month)?styles:''">
 					<span v-if="month.getFullYear() == curNow.getFullYear() && month.getMonth() == curNow.getMonth()" class="active">{{ month.getMonth()+1 }}月</span>
 					<span v-else>{{ month.getMonth()+1 }}月</span>
 				</li>
 			</ul>
 			<ul class="days" v-if="dateType=='quarter'" :class="'quarters'">
-				<li @click="pick(quarter)" v-for="quarter in quarters" v-if="dateType=='quarter'" :class="{'tickClass':tickClass(quarter)}">
-					<span v-if="quarter.getFullYear() == curNow.getFullYear() && quarter.getMonth() == curNow.getMonth()" class="active">第{{ Math.floor((quarter.getMonth() + 3) / 3) }}季度</span>
+				<li @click="pick(quarter)" v-for="(quarter,index) in quarters" :key="index" v-if="dateType=='quarter'" :class="tickClass(quarter)?styles:''">
+					<span v-if="quarter.getFullYear() == curNow.getFullYear() && Math.floor((quarter.getMonth() + 3) / 3) == Math.floor((curNow.getMonth() + 3) / 3)" class="active">第{{ Math.floor((quarter.getMonth() + 3) / 3) }}季度</span>
 					<span v-else>第{{ Math.floor((quarter.getMonth() + 3) / 3) }}季度</span>
 				</li>
 			</ul>
 			<ul class="days" v-if="dateType=='week'" :class="'weeks'">
-				<li @click="pick(week)" v-for="week in weeks" v-if="dateType=='week'" :class="{'tickClass':tickClass(week)}">
+				<li @click="pick(week)" v-for="(week,index) in weeks" :key="index" v-if="dateType=='week'" :class="tickClass(week)?styles:''">
 					<span v-if="getYearWeek(week)==getYearWeek(curNow)&&week.getFullYear() == curNow.getFullYear()" class="active">{{getweeks(week)}}</span>
 					<span v-else>{{getweeks(week)}}</span>
 				</li>
 			</ul>
 			<ul class="days" v-if="dateType=='year'" :class="'years'">
-				<li @click="pick(year)" v-for="year in years" v-if="dateType=='year'" :class="{'tickClass':tickClass(year)}">
+				<li @click="pick(year)" v-for="(year,index) in years" :key="index" v-if="dateType=='year'" :class="tickClass(year)?styles:''">
 					<span v-if="year.getFullYear() == curNow.getFullYear()" class="active">{{ year.getFullYear() }}</span>
 					<span v-else>{{ year.getFullYear() }}</span>
 				</li>
@@ -99,17 +99,50 @@
 			'compareTime': {
 				type: Array,
 				default: []
-			}
+			},
+			'styles': {
+				type: String,
+				default: ''
+			},
+			'initOptions': {
+				type: Object,
+				default: {
+					curnow: new Date(),
+					initnow: new Date(),
+					inittype: false
+				}
+			},
 		},
 		computed: {
 			curNow() {
-				return this.$store.state.curNow
+				// return this.$store.state.curNow
+				return this.initOptions.curnow
 			},
 			initNow() {
-				return this.$store.state.initNow
+				// return this.$store.state.initNow
+				return this.initOptions.initnow
 			},
 			inittype() {
-				return this.$store.state.inittype
+				// return this.$store.state.inittype
+				return this.initOptions.inittype
+			},
+			checkedDate() {
+				let valueMoment = this.curNow
+				if(this.dateType == 'year') { //年
+					return moment(valueMoment).format("YYYY-01-01");
+				} else if(this.dateType == 'month') { //月份
+					return moment(valueMoment).format("YYYY-MM-01");
+				} else if(this.dateType == 'day') { //天
+					return moment(valueMoment).format("YYYY-MM-DD");
+				} else if(this.dateType == 'quarter') { //季度
+					let newM = moment(valueMoment).format('Q') * 3 - 3
+        			return moment(new Date(moment(valueMoment).format('YYYY'),newM,1)).format('YYYY-MM-01')
+				} else if(this.dateType == 'week') { //周
+					let week = moment(valueMoment).format('E');
+					let minusDay = week != 0 ? week - 1 : 6;
+					let monday = new Date(valueMoment.getFullYear(), valueMoment.getMonth(), valueMoment.getDate() - minusDay);
+					return moment(monday).format("YYYY-MM-DD");
+				}
 			},
 			getCurrentWeek() {
 				var startStop = [];
@@ -128,7 +161,8 @@
 			this.initData(this.initNow);
 		},
 		mounted() {
-			console.log(this.initNow)
+			console.log(this.styles)
+			// console.log(this.initNow)
 		},
 		methods: {
 			tickClass(item) {
@@ -174,21 +208,24 @@
 				return s_week + '-' + e_week;
 			},
 			pick: function(date) {
-				this.$store.commit('newCurNow', date)
+				// this.$store.commit('newCurNow', date)
 				if(this.dateType == 'week'){
 					console.log(this.weeks[0])
-					this.$store.commit('newInitNow', this.weeks[0])
-					this.$store.commit('newInittype', true)
+					// this.$store.commit('newInitNow', this.weeks[0])
+					// this.$store.commit('newInittype', true)
+					this.$emit('new-initOptions', {curnow:date,initnow:this.weeks[0],inittype:true})
 				}else if(this.dateType == 'quarter'){
 					console.log(this.quarters[0])
-					this.$store.commit('newInitNow', this.quarters[0])
-					this.$store.commit('newInittype', true)
+					// this.$store.commit('newInitNow', this.quarters[0])
+					// this.$store.commit('newInittype', true)
+					this.$emit('new-initOptions', {curnow:date,initnow:this.quarters[0],inittype:true})
 				}else{
-					this.$store.commit('newInitNow', date)
+					// this.$store.commit('newInitNow', date)
+					this.$emit('new-initOptions', {curnow:date,initnow:date,inittype:false})
 				}
-				if(this.events) {//其他事件
-					this.events() //函数
-					console.log(moment(date).format('YYYY年MM月DD日'))
+				if(this.events) {//自定义事件
+					// this.events() //执行函数
+					this.events(this.checkedDate)//传递点击的日历，以供外层需要传值
 				}
 			},
 			pickPre: function(year, month, type) {
@@ -240,10 +277,6 @@
 					}
 				}
 			},
-			pickYear: function(year, month) {
-				alert(year + "," + month);
-			},
-
 			// 返回 类似 2016-01-02 格式的字符串
 			formatDate: function(year, month, day) {
 				var y = year;
@@ -253,23 +286,6 @@
 				if(d < 10) d = "0" + d;
 				return y + "-" + m + "-" + d
 			},
-			format: function(year, month, day) {
-				var y = year;
-				var m = month;
-				var d = day;
-				if(y && m && d) {
-					return y + "年" + m + "月" + d + "日"
-				} else if(m && !d && this.dateType == "month") {
-					return y + "年" + m + "月"
-				} else if(this.dateType == "quarter") {
-					return y + "年第" + m + "季度"
-				} else if(y && !m && !d) {
-					return y + "年"
-				} else if(!y) {
-					return m + "月" + d + "日"
-				}
-
-			},
 			initData: function(cur) {
 				var date = new Date(cur);
 				this.currentDay = date.getDate();
@@ -277,7 +293,7 @@
 				this.currentMonth = date.getMonth() + 1;
 				this.currentQuarter = Math.floor((date.getMonth() + 3) / 3);
 				var str = this.formatDate(this.currentYear, this.currentMonth, this.currentDay);
-				console.log("today:" + str + "," + this.currentWeek + "," + moment(new Date()).format("YY-MM-DD"));
+				console.log("today:" + str + "," + moment(new Date()).format("YYYY-MM-DD"));
 				if(this.dateType == 'day') {
 					this.days.length = 0;
 					var dstr = this.formatDate(this.currentYear, this.currentMonth, 1);
@@ -522,7 +538,6 @@
 
 	.month {
 		width: 100%;
-		/*background: #00B8EC;*/
 	}
 
 	.month ul {
@@ -534,7 +549,6 @@
 
 	.year-month {
 		display: flex;
-		/*flex-direction: column;*/
 		align-items: center;
 		justify-content: space-around;
 	}
@@ -550,7 +564,7 @@
 
 	.choose-month {
 		text-align: center;
-		font-size: 1rem;
+		font-size: 14px;
 	}
 
 	.arrow {
@@ -562,7 +576,6 @@
 	}
 
 	.month ul li {
-		/*color: white;*/
 		font-size: 16px;
 		text-transform: uppercase;
 		letter-spacing: 3px;
@@ -571,10 +584,8 @@
 	.weekdays {
 		margin: 0;
 		padding: 10px 0;
-		/*background-color: #00B8EC;*/
 		display: flex;
 		flex-wrap: wrap;
-		/*color: #FFFFFF;*/
 		justify-content: space-around;
 	}
 
@@ -582,6 +593,7 @@
 		display: inline-block;
 		width: 13.6%;
 		text-align: center;
+		font-size: 14px
 	}
 
 	.days {
@@ -600,7 +612,7 @@
 		text-align: center;
 		padding-bottom: 15px;
 		padding-top: 15px;
-		font-size: .5rem;
+		font-size: 12px;
 		color: #000;
 	}
 
