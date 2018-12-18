@@ -19,7 +19,8 @@
 </template>
 
 <script>
-	import clickoutside from 'element-ui/src/utils/clickoutside';
+	// import clickoutside from 'element-ui/src/utils/clickoutside';
+	import clickoutside from '../utils/clickoutside';
 	import fullDate from './fullDate'
 	import moment from 'moment'
 	export default {
