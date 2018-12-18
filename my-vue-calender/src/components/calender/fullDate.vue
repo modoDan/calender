@@ -85,7 +85,7 @@
 				endWeek: '',
 				beforeWeekNum: 1,
 				turnType: null,
-				now: new Date(),
+                now: new Date(),
 			}
 		},
 		props: {
@@ -115,15 +115,12 @@
 		},
 		computed: {
 			curNow() {
-				// return this.$store.state.curNow
 				return this.initOptions.curnow
 			},
 			initNow() {
-				// return this.$store.state.initNow
 				return this.initOptions.initnow
 			},
 			inittype() {
-				// return this.$store.state.inittype
 				return this.initOptions.inittype
 			},
 			checkedDate() {
@@ -156,13 +153,11 @@
 				startStop.push(sunday); //本周终止时间
 				return startStop;
 			},
-		},
+        },
 		created: function() {
 			this.initData(this.initNow);
 		},
 		mounted() {
-			console.log(this.styles)
-			// console.log(this.initNow)
 		},
 		methods: {
 			tickClass(item) {
@@ -206,25 +201,16 @@
 				var s_week = moment(monday).format('M月D日')
 				var e_week = moment(sunday).format('M月D日')
 				return s_week + '-' + e_week;
-			},
+            },
 			pick: function(date) {
-				// this.$store.commit('newCurNow', date)
 				if(this.dateType == 'week'){
-					console.log(this.weeks[0])
-					// this.$store.commit('newInitNow', this.weeks[0])
-					// this.$store.commit('newInittype', true)
 					this.$emit('new-initOptions', {curnow:date,initnow:this.weeks[0],inittype:true})
 				}else if(this.dateType == 'quarter'){
-					console.log(this.quarters[0])
-					// this.$store.commit('newInitNow', this.quarters[0])
-					// this.$store.commit('newInittype', true)
 					this.$emit('new-initOptions', {curnow:date,initnow:this.quarters[0],inittype:true})
 				}else{
-					// this.$store.commit('newInitNow', date)
 					this.$emit('new-initOptions', {curnow:date,initnow:date,inittype:false})
 				}
 				if(this.events) {//自定义事件
-					// this.events() //执行函数
 					this.events(this.checkedDate)//传递点击的日历，以供外层需要传值
 				}
 			},
@@ -284,7 +270,10 @@
 				if(m < 10) m = "0" + m;
 				var d = day;
 				if(d < 10) d = "0" + d;
-				return y + "-" + m + "-" + d
+				let moment1 = moment(new Date(year, month-1, day)).format("YYYY-MM-DD")
+				console.log('這兩種格式相同----》',y + "-" + m + "-" + d,moment1)
+				// return y + "-" + m + "-" + d
+				return moment1
 			},
 			initData: function(cur) {
 				var date = new Date(cur);

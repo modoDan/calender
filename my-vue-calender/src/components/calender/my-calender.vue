@@ -1,7 +1,7 @@
 <template>
 	<div class="date-picker__time-header" ref="datePicker">
 		<div class="date-event active">
-			<input type="text" v-show="options.text" class="calender-input" v-model="dateText" @click="openDate">
+			<input type="text" v-show="options.text" class="calender-input" v-model="dateText" @click="openDate($event)">
 		</div>
 		<div class="date-pos" ref="datePos" v-clickoutside="() => showMenu = false">
 			<template v-if="showMenu">
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-	import Clickoutside from 'element-ui/src/utils/clickoutside';
+	import clickoutside from 'element-ui/src/utils/clickoutside';
 	import fullDate from './fullDate'
 	import moment from 'moment'
 	export default {
@@ -47,11 +47,10 @@
 			},
 		},
 		directives: {
-			Clickoutside
+			clickoutside
 		},
 		computed: {
 			curNow() {
-				// return this.$store.state.curNow
 				return this.initOptions.curnow
 			},
 			dateText() {
@@ -93,21 +92,18 @@
 				this.initOptions.curnow = msg.curnow
 				this.initOptions.initnow = msg.initnow
 				this.initOptions.inittype = msg.inittype
-			},
+            },
 			openDate: function(e) {
 				this.showMenu = true
 				var _this = this
 				window.setTimeout(function() {
 					var datePos = _this.$refs.datePos;
 					var left = e.target.offsetLeft;
-					var top = e.target.offsetTop;
-					var width = document.getElementsByClassName("table-common")[0].offsetWidth;
-					var height = document.getElementsByClassName("table-common")[0].offsetHeight;
+					var top = e.clientY;
 					var maxHeight = document.getElementsByTagName("body")[0].offsetHeight + document.documentElement.scrollTop;
 					var bodywidth = document.getElementsByTagName("body")[0].offsetWidth
 					var targetHeight = datePos.offsetHeight;
 					top = top + targetHeight > maxHeight ? maxHeight - targetHeight - 10 : top;
-					// datePos.style.left = (left - bodywidth/1920 * 450) + 'px'; // 指定创建的DIV在文档中距离左侧的位置
 					datePos.style.left = (e.clientX - bodywidth/1920 * 150) + 'px';
 					datePos.style.top = top + 'px'; // 指定创建的DIV在文档中距离顶部的位置
 					datePos.style.position = 'absolute'; // 为新创建的DIV指定绝对定位
@@ -117,9 +113,6 @@
 					this.initOptions.curnow = new Date()
 					this.initOptions.initnow = new Date()
 					this.initOptions.inittype = false
-					// this.$store.commit('newCurNow', new Date())
-					// this.$store.commit('newInitNow', new Date())
-					// this.$store.commit('newInittype', false)
 				}
 			}
 		}
@@ -128,10 +121,10 @@
 <style>
 	.calender-input {
 		background: #ececec;
-		text-indent: 30px;
-		height: 20px;
-		max-width: 150px;
-		border-radius: 10px;
+		text-indent: 15px;
+		height: 30px;
+		max-width: 220px;
+		border-radius: 15px;
 		outline: none;
 		border: none;
 	}

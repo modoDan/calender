@@ -14,7 +14,9 @@ Vue.use(Vuex)
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-
+//全局引用日历组件
+import myCalender from './components/calender/index.js'
+Vue.use(myCalender);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -9,16 +9,21 @@
 			</thead>
 			<tbody>
 				<tr>
+					<h3>1、列表形式引入多个日历</h3>
+				</tr>
+				<tr>
 					<!-- 日历定位 -->
 					<td><button @click="openDate($event)">点击定位1</button>
 					</td>
-					<td><button>按钮1</button>
+					<td><button @click="openDate($event)">点击定位2</button>
 					</td>
-					<td><button>按钮2</button>
+					<td><button @click="openDate($event)">点击定位3</button>
 					</td>
-					<td><button @click="openDate($event)">点击定位2
-					</button>
+					<td><button @click="openDate($event)">点击定位4</button>
 					</td>
+				</tr>
+				<tr>
+					<h3>2、单独引用一个日历</h3>
 				</tr>
 				<tr>
 					<td>周历
@@ -32,16 +37,16 @@
 				</tr>
 				<tr>
 					<td>
-						<my-calender :options="options1" ref="mycalender"></my-calender>
+						<my-calender :options="options1"></my-calender>
 					</td>
 					<td>
-						<my-calender :options="options2" ref="mycalender"></my-calender>
+						<my-calender :options="options2"></my-calender>
 					</td>
 					<td>
-						<my-calender :options="options3" ref="mycalender"></my-calender>
+						<my-calender :options="options3"></my-calender>
 					</td>
 					<td>
-						<my-calender :options="options4" ref="mycalender"></my-calender>
+						<my-calender :options="options4"></my-calender>
 					</td>
 				</tr>
 			</tbody>
@@ -51,10 +56,9 @@
 </template>
 
 <script>
-	import myCalender from './components/calender/my-calender'
 	export default {
 		name: 'app',
-		data: function() {
+		data() {
 			return {
 				options: {
 					dateType: 'day',//日历类型为day,week,month,quarter,year五种，
@@ -95,22 +99,11 @@
 				},
 			}
 		},
-		computed: {
-			
-		},
-		components: {
-			myCalender
-		},
 		mounted() {
-			this.$axios.get('/api/goods').then((response) => {
-				// console.log(response);
-				//this.$nextTick() => 在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
-				//数据发生变化后，不能直接更新在dom上，需要在回调函数中刷新DOM,即异步加载DOM
-			});
 		},
 		methods: {
 			pickDate: function(result) {
-				//可以做任何事
+                //可以做任何事
 				alert('您好呀!自定义事件'+'--'+result)
 			},
 			openDate: function(e) {
@@ -133,13 +126,12 @@
 		font-family: 'Avenir', Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		text-align: center;
 		color: #2c3e50;
 		height: 100%;
+		text-align: center;
 	}
 	
 	.table-common {
-		margin-top: 60px;
 		width: 100%;
 		height: 200px;
 		position: relative;
@@ -149,8 +141,9 @@
 		height: 25%;
 	}
 	.tipClass:after {
-		content: '国庆';
+		content: '√';
 		color: red;
-		font-size: 12px
+		font-size: 14px;
+		font-weight: bold;
 	}
 </style>
