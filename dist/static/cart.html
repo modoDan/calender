@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>购物车</title>
+		<style>
+			.check {
+				background-color: red;
+				border-radius: 50%;
+				width: 18px;
+				height: 18px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="cart">
+			<h1 v-text="title" v-on:click="clickMe"></h1>
+			<ul>
+				<li v-for="item in productList">
+					<button @click="select(item)" v-bind:class="{'check':item.checked}">
+					</button>
+					<input type="text" disabled v-model="item.productQuantity|changeNumber">
+					<div v-text="item.productName">
+						{{changeNum(item)}}
+					</div>
+				</li>
+			</ul>
+			<!--<div>
+				<button @click="selectAll(true)">全选</button>
+				<button @click="selectAll(false)">取消全选</button>
+			</div>-->
+		</div>
+		<!-- built files will be auto injected -->
+	</body>
+	<script src="https://unpkg.com/vue"></script>
+	<!--<script src="vue.js"></script>-->
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<!--axios-->
+	<!--<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script><!--vue-resource-->
+	<script src="cart.js"></script>
+
+</html>
