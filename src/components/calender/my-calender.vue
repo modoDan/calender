@@ -5,13 +5,17 @@
 		</div>
 		<div class="date-pos" ref="datePos" v-clickoutside="() => showMenu = false">
 			<template v-if="showMenu">
-				<full-date 
+				<!-- <full-date 
 				:dateType="options.dateType" 
 				:events="options.events" 
 				:compareTime="options.compareTime" 
 				:styles="options.styles"
 				:initOptions="initOptions"
 				@new-initOptions="newinitOptions"
+				></full-date> -->
+				<full-date 
+				v-bind="$attrs"
+				v-model="initOptions"
 				></full-date>
 			</template>
 		</div>
@@ -35,22 +39,21 @@
 				}
 			}
 		},
-		props: {
-			'options': {
-				type: Object,
-				default: {
-					dateType: 'day',
-					events: '',
-					compareTime: [],
-					text:'',
-					styles:''
-				}
-			},
-		},
 		directives: {
 			clickoutside
 		},
+		watch:{
+			curNow(val,oldVal){
+				console.log(val)
+				if(this.options.events) {//自定义事件
+					this.options.events(this.dateText)//传递点击的日历，以供外层需要传值
+				}
+			}
+		},
 		computed: {
+			options(){
+				return this.$attrs.options
+			},
 			curNow() {
 				return this.initOptions.curnow
 			},

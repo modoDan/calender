@@ -3,17 +3,17 @@
 		<div id="calendar" :type="dateType">
 			<div class="month">
 				<ul>
-					<li class="arrow" @click="pickPre(currentYear,currentMonth,1)" v-if="dateType=='day'">❮❮</li>
-					<li class="arrow" @click="pickPre(starYear,currentMonth)" v-if="dateType=='year'">❮</li>
-					<li class="arrow" @click="pickPre(currentYear,currentMonth)" v-else>❮</li>
+					<li class="arrow" @click="pickPre(currentYear,currentMonth,1)" v-if="dateType=='day'">&lt;&lt;</li>
+					<li class="arrow" @click="pickPre(starYear,currentMonth)" v-if="dateType=='year'">&lt;</li>
+					<li class="arrow" @click="pickPre(currentYear,currentMonth)" v-else>&lt;</li>
 					<li class="year-month">
 						<span class="choose-year" v-if="dateType=='year'">{{ rangYear }}</span>
 						<span class="choose-year" v-else>{{ currentYear }}年</span>
 						<span class="choose-month" v-if="dateType=='day'">{{ currentMonth }}月</span>
 					</li>
-					<li class="arrow" @click="pickNext(starYear,currentMonth)" v-if="dateType=='year'">❯</li>
-					<li class="arrow" @click="pickNext(currentYear,currentMonth)" v-else>❯</li>
-					<li class="arrow" @click="pickNext(currentYear,currentMonth,1)" v-if="dateType=='day'">❯❯</li>
+					<li class="arrow" @click="pickNext(starYear,currentMonth)" v-if="dateType=='year'">&gt;</li>
+					<li class="arrow" @click="pickNext(currentYear,currentMonth)" v-else>&gt;</li>
+					<li class="arrow" @click="pickNext(currentYear,currentMonth,1)" v-if="dateType=='day'">&gt;&gt;</li>
 				</ul>
 			</div>
 			<ul class="weekdays" v-if="dateType=='day'">
@@ -86,24 +86,14 @@
 				beforeWeekNum: 1,
 				turnType: null,
                 now: new Date(),
+                options: this.$attrs.options
 			}
 		},
+		model:{
+			prop:'initOptions',
+			event:'new-initOptions'
+		},
 		props: {
-			'dateType': {
-				type: String,
-				default: 'month'
-			},
-			'events': {
-				default: ''
-			},
-			'compareTime': {
-				type: Array,
-				default: []
-			},
-			'styles': {
-				type: String,
-				default: ''
-			},
 			'initOptions': {
 				type: Object,
 				default: {
@@ -114,6 +104,18 @@
 			},
 		},
 		computed: {
+			dateType() {
+				return this.options.dateType
+			},
+			events() {
+				return this.options.events
+			},
+			compareTime() {
+				return this.options.compareTime
+			},
+			styles() {
+				return this.options.styles
+			},
 			curNow() {
 				return this.initOptions.curnow
 			},
@@ -123,24 +125,24 @@
 			inittype() {
 				return this.initOptions.inittype
 			},
-			checkedDate() {
-				let valueMoment = this.curNow
-				if(this.dateType == 'year') { //年
-					return moment(valueMoment).format("YYYY-01-01");
-				} else if(this.dateType == 'month') { //月份
-					return moment(valueMoment).format("YYYY-MM-01");
-				} else if(this.dateType == 'day') { //天
-					return moment(valueMoment).format("YYYY-MM-DD");
-				} else if(this.dateType == 'quarter') { //季度
-					let newM = moment(valueMoment).format('Q') * 3 - 3
-        			return moment(new Date(moment(valueMoment).format('YYYY'),newM,1)).format('YYYY-MM-01')
-				} else if(this.dateType == 'week') { //周
-					let week = moment(valueMoment).format('E');
-					let minusDay = week != 0 ? week - 1 : 6;
-					let monday = new Date(valueMoment.getFullYear(), valueMoment.getMonth(), valueMoment.getDate() - minusDay);
-					return moment(monday).format("YYYY-MM-DD");
-				}
-			},
+			// checkedDate() {
+			// 	let valueMoment = this.curNow
+			// 	if(this.dateType == 'year') { //年
+			// 		return moment(valueMoment).format("YYYY-01-01");
+			// 	} else if(this.dateType == 'month') { //月份
+			// 		return moment(valueMoment).format("YYYY-MM-01");
+			// 	} else if(this.dateType == 'day') { //天
+			// 		return moment(valueMoment).format("YYYY-MM-DD");
+			// 	} else if(this.dateType == 'quarter') { //季度
+			// 		let newM = moment(valueMoment).format('Q') * 3 - 3
+   //      			return moment(new Date(moment(valueMoment).format('YYYY'),newM,1)).format('YYYY-MM-01')
+			// 	} else if(this.dateType == 'week') { //周
+			// 		let week = moment(valueMoment).format('E');
+			// 		let minusDay = week != 0 ? week - 1 : 6;
+			// 		let monday = new Date(valueMoment.getFullYear(), valueMoment.getMonth(), valueMoment.getDate() - minusDay);
+			// 		return moment(monday).format("YYYY-MM-DD");
+			// 	}
+			// },
 			getCurrentWeek() {
 				var startStop = [];
 				var now = this.now
@@ -211,7 +213,8 @@
 					this.$emit('new-initOptions', {curnow:date,initnow:date,inittype:false})
 				}
 				if(this.events) {//自定义事件
-					this.events(this.checkedDate)//传递点击的日历，以供外层需要传值
+					console.log(this.curNow)
+					// this.events(this.checkedDate)//传递点击的日历，以供外层需要传值
 				}
 			},
 			pickPre: function(year, month, type) {
@@ -558,6 +561,7 @@
 
 	.arrow {
 		padding: 20px;
+		font-weight: bold;
 	}
 
 	.arrow:hover {
